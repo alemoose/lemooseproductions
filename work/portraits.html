@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portraits - Lemoose Productions</title>
+    <link rel="icon" href="/uploads/newlogo.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700;1,900&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --text-sub: clamp(12px, 2.05vw, 15px);
+        --text-sub-track: 0.16em;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #0b0c0e;
+        color: #e0dcd4;
+        font-family: 'Inter Tight', sans-serif;
+      }
+
+      .grain-overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9000;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+        opacity: 0.038;
+        mix-blend-mode: overlay;
+      }
+
+      .nav-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 8000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 28px;
+        pointer-events: none;
+      }
+
+      .nav-logo-link,
+      .nav-capsule,
+      .nav-icons {
+        pointer-events: all;
+      }
+
+      .nav-logo-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .nav-logo {
+        width: 38px;
+        height: 38px;
+        object-fit: contain;
+        opacity: 0.82;
+      }
+
+      .nav-capsule,
+      .nav-icons {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        background: rgba(11, 12, 14, 0.62);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(224, 220, 212, 0.1);
+        border-radius: 100px;
+      }
+
+      .nav-capsule {
+        padding: 5px;
+      }
+
+      .nav-icons {
+        padding: 5px 10px;
+      }
+
+      .nav-btn {
+        border: none;
+        text-decoration: none;
+        background: none;
+        color: rgba(224, 220, 212, 0.55);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        padding: 7px 16px;
+        border-radius: 100px;
+      }
+
+      .nav-btn.active {
+        background: #e0dcd4;
+        color: #0b0c0e;
+        font-weight: 700;
+      }
+
+      .nav-icon-btn {
+        display: flex;
+        align-items: center;
+        color: rgba(224, 220, 212, 0.5);
+        padding: 6px 7px;
+        text-decoration: none;
+      }
+
+      .nav-back {
+        display: none;
+        align-items: center;
+        gap: 7px;
+        pointer-events: all;
+        background: rgba(11, 12, 14, 0.62);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(224, 220, 212, 0.1);
+        border-radius: 100px;
+        padding: 8px 14px 8px 12px;
+        color: rgba(224, 220, 212, 0.78);
+        text-decoration: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .nav-back svg {
+        display: block;
+      }
+
+      .portraits-page {
+        background: #0b0c0e;
+      }
+
+      .section-shell {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .edge-label {
+        position: absolute;
+        top: clamp(56px, 17vh, 140px);
+        left: 28px;
+        transform: translateY(-50%) rotate(-90deg);
+        transform-origin: center center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--text-sub);
+        letter-spacing: var(--text-sub-track);
+        color: rgba(224, 220, 212, 0.22);
+        white-space: nowrap;
+        z-index: 2;
+      }
+
+      .hero {
+        min-height: 100vh;
+        height: 100vh;
+      }
+
+      .hero__photo,
+      .hero__overlay {
+        position: absolute;
+        inset: 0;
+      }
+
+      .hero__photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .hero__overlay {
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+      }
+
+      .hero__copy {
+        position: absolute;
+        z-index: 2;
+      }
+
+      .hero__copy--left {
+        left: clamp(24px, 6vw, 80px);
+        bottom: clamp(48px, 10vh, 80px);
+      }
+
+      .hero__copy--right {
+        right: clamp(20px, 5vw, 52px);
+        bottom: clamp(20px, 5vh, 44px);
+      }
+
+      .story-title {
+        margin: 0;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: clamp(56px, 12vw, 104px);
+        color: #e0dcd4;
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+
+      .hero__subtitle,
+      .mono-label {
+        margin: 16px 0 0;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--text-sub);
+        letter-spacing: var(--text-sub-track);
+        text-transform: uppercase;
+        color: rgba(224, 220, 212, 0.88);
+      }
+
+      .hero__scroll {
+        margin: 0;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--text-sub);
+        letter-spacing: var(--text-sub-track);
+        text-transform: uppercase;
+        color: rgba(224, 220, 212, 0.58);
+      }
+
+      .intro,
+      .pull-quote {
+        display: flex;
+        align-items: center;
+        padding: clamp(48px, 9vw, 92px) clamp(24px, 8vw, 120px);
+      }
+
+      .intro {
+        min-height: 25vh;
+      }
+
+      .pull-quote {
+        min-height: 20vh;
+      }
+
+      .intro p,
+      .pull-quote p {
+        margin: 0;
+        max-width: 60ch;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-size: clamp(22px, 2.4vw, 34px);
+        line-height: 1.45;
+        color: rgba(224, 220, 212, 0.82);
+      }
+
+      .pull-quote p {
+        max-width: 50ch;
+      }
+
+      .triptych {
+        min-height: 70vh;
+        height: 70vh;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: minmax(0, 1fr);
+        align-items: stretch;
+        gap: 2px;
+        background: rgba(11, 12, 14, 0.86);
+      }
+
+      .pair {
+        min-height: 65vh;
+        height: 65vh;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2px;
+        background: rgba(11, 12, 14, 0.86);
+      }
+
+      .triptych img,
+      .pair img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #0b0c0e;
+        display: block;
+      }
+
+      .solo-vertical {
+        min-height: 85vh;
+        height: 85vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 clamp(22px, 8vw, 120px);
+        position: relative;
+      }
+
+      .solo-vertical--closer {
+        min-height: 90vh;
+        height: 90vh;
+      }
+
+      .solo-vertical img {
+        display: block;
+        max-height: 85vh;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+      }
+
+      .solo-vertical--closer img {
+        max-height: 90vh;
+      }
+
+      .solo-vertical__meta {
+        position: absolute;
+        left: clamp(24px, 6vw, 80px);
+        bottom: clamp(16px, 3vw, 26px);
+        margin: 0;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--text-sub);
+        letter-spacing: var(--text-sub-track);
+        color: rgba(224, 220, 212, 0.88);
+        text-transform: uppercase;
+        z-index: 2;
+      }
+
+      .portrait-row-567,
+      .portrait-row-911,
+      .portrait-row-234 {
+        min-height: 85vh;
+        height: 85vh;
+        display: grid;
+        gap: 2px;
+        background: rgba(11, 12, 14, 0.86);
+      }
+
+      .portrait-row-567 {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2.15fr);
+      }
+
+      .portrait-row-911,
+      .portrait-row-234 {
+        grid-template-columns: minmax(0, 2.15fr) minmax(0, 1fr) minmax(0, 1fr);
+      }
+
+      .portrait-row-567__item,
+      .portrait-row-911__item,
+      .portrait-row-234__item {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .portrait-row-567__item img,
+      .portrait-row-911__item img,
+      .portrait-row-234__item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+      }
+
+      .portrait-row-567__item:nth-child(3) img,
+      .portrait-row-911__item:nth-child(1) img {
+        object-position: center 54%;
+      }
+
+      .portrait-row-234__item:nth-child(1) img {
+        object-position: center 76%;
+      }
+
+      .portrait-row-911__item:nth-child(3) img {
+        object-position: 6% center;
+      }
+
+      .portrait-row-567__item:nth-child(1) .portrait-row-567__mo-clip,
+      .portrait-row-567__item:nth-child(2) .portrait-row-567__mo-clip {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        z-index: 0;
+      }
+
+      .portrait-row-567__item:nth-child(1) .portrait-row-567__mo-clip img,
+      .portrait-row-567__item:nth-child(2) .portrait-row-567__mo-clip img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+      }
+
+      .portrait-row-1213 {
+        min-height: 85vh;
+        height: 85vh;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2.15fr) minmax(0, 1fr);
+        gap: 2px;
+        background: rgba(11, 12, 14, 0.86);
+      }
+
+      .portrait-row-1213__item {
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .portrait-row-1213__item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+      }
+
+      .portrait-row-1213__item:nth-child(2) img {
+        object-position: center 54%;
+      }
+
+      .wide-landscape {
+        min-height: 80vh;
+        height: 80vh;
+        position: relative;
+      }
+
+      .wide-landscape .hero__photo {
+        object-position: 40% center;
+      }
+
+      .next-story {
+        min-height: 15vh;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: clamp(22px, 4vw, 40px) clamp(24px, 6vw, 80px);
+        border-top: 0.5px dashed rgba(224, 220, 212, 0.2);
+      }
+
+      .next-story__left,
+      .next-story__right {
+        margin: 0;
+      }
+
+      .next-story__left {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--text-sub);
+        letter-spacing: var(--text-sub-track);
+        color: rgba(224, 220, 212, 0.7);
+        text-transform: uppercase;
+      }
+
+      .next-story__link {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-size: clamp(24px, 3vw, 38px);
+        color: #e0dcd4;
+        text-decoration: none;
+      }
+
+      .site-footer {
+        background: #080910;
+        padding: clamp(40px, 6vw, 52px) clamp(20px, 5vw, 80px) clamp(36px, 5vw, 52px);
+        border-top: 1px solid rgba(224, 220, 212, 0.06);
+      }
+
+      .site-footer__shot-for {
+        max-width: 640px;
+        margin: 0 auto clamp(20px, 3.5vw, 28px);
+        text-align: center;
+      }
+
+      .site-footer__shot-for-label {
+        margin: 0 0 12px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--text-sub);
+        letter-spacing: var(--text-sub-track);
+        text-transform: uppercase;
+        color: rgba(224, 220, 212, 0.42);
+      }
+
+      .site-footer__shot-for-names {
+        margin: 0;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-size: var(--text-sub);
+        line-height: 1.5;
+        color: rgba(224, 220, 212, 0.62);
+      }
+
+      .site-footer__rule {
+        width: 100%;
+        height: 1px;
+        background: rgba(224, 220, 212, 0.06);
+        margin: 16px 0;
+      }
+
+      .site-footer__bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .site-footer__bottom-logo {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        opacity: 0.4;
+      }
+
+      .site-footer__copyright {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--text-sub);
+        letter-spacing: var(--text-sub-track);
+        color: rgba(224, 220, 212, 0.16);
+        text-transform: uppercase;
+        text-align: right;
+      }
+
+      @media (max-width: 767px) {
+        .nav-capsule,
+        .nav-icons {
+          display: none;
+        }
+
+        .nav-bar {
+          justify-content: space-between;
+          padding: 16px 24px;
+        }
+
+        .nav-back {
+          display: inline-flex;
+        }
+
+        .hero {
+          min-height: 100svh;
+          height: 100svh;
+        }
+
+        /* Landscape hero on narrow viewports: bias crop toward the right so subjects aren’t lost in center blur */
+        .hero .hero__photo {
+          object-position: 92% center;
+        }
+
+        .edge-label {
+          left: 8px;
+          top: 120px;
+          font-size: 10px;
+          letter-spacing: 0.12em;
+        }
+
+        .hero__copy--left {
+          left: 24px;
+          bottom: 34px;
+        }
+
+        .story-title {
+          font-size: clamp(42px, 18vw, 62px);
+        }
+
+        .intro,
+        .pull-quote {
+          padding: 44px 24px;
+          min-height: auto;
+        }
+
+        .intro p,
+        .pull-quote p {
+          font-size: clamp(20px, 7vw, 28px);
+          max-width: none;
+        }
+
+        .triptych,
+        .pair {
+          height: auto;
+          min-height: 0;
+          grid-template-columns: 1fr;
+        }
+
+        .triptych img,
+        .pair img {
+          min-height: 0;
+        }
+
+        .solo-vertical,
+        .solo-vertical--closer {
+          min-height: auto;
+          height: auto;
+          padding: 0;
+        }
+
+        .solo-vertical img,
+        .solo-vertical--closer img {
+          width: 100%;
+          max-width: 100%;
+          max-height: none;
+          height: auto;
+        }
+
+        .solo-vertical__meta {
+          left: 24px;
+          bottom: 16px;
+        }
+
+        .portrait-row-567,
+        .portrait-row-911,
+        .portrait-row-234,
+        .portrait-row-1213 {
+          min-height: 0;
+          height: auto;
+          grid-template-columns: 1fr;
+        }
+
+        .portrait-row-567__item img,
+        .portrait-row-911__item img,
+        .portrait-row-234__item img,
+        .portrait-row-1213__item img {
+          width: 100%;
+          height: 56vh;
+          max-width: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+
+        .portrait-row-567__item:nth-child(1),
+        .portrait-row-567__item:nth-child(2) {
+          height: 82svh;
+          min-height: 82svh;
+        }
+
+        .portrait-row-567__item:nth-child(1) .portrait-row-567__mo-clip img,
+        .portrait-row-567__item:nth-child(2) .portrait-row-567__mo-clip img {
+          height: 142%;
+          min-height: 142%;
+          max-height: none;
+          object-fit: cover;
+          object-position: center top;
+        }
+
+        .portrait-row-567__item:nth-child(3) img,
+        .portrait-row-911__item:nth-child(1) img {
+          object-position: center 54%;
+        }
+
+        .portrait-row-234__item:nth-child(1) img {
+          object-position: center 76%;
+        }
+
+        .portrait-row-911__item:nth-child(3) img {
+          object-position: 6% center;
+        }
+
+        .portrait-row-1213__item:nth-child(2) img {
+          object-position: center 54%;
+        }
+
+        .wide-landscape {
+          height: 66vh;
+          min-height: 66vh;
+        }
+
+        .next-story {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .site-footer__bottom {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .site-footer__copyright {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grain-overlay"></div>
+
+    <nav class="nav-bar" aria-label="Primary">
+      <a href="/" class="nav-logo-link" aria-label="Home">
+        <img src="/uploads/newlogo.png" class="nav-logo" alt="" />
+      </a>
+
+      <div class="nav-capsule">
+        <a class="nav-btn" href="/">HOME</a>
+        <a class="nav-btn active" href="/work">WORK</a>
+        <a class="nav-btn" href="/about">ABOUT</a>
+        <a class="nav-btn" href="/contact">CONTACT</a>
+      </div>
+
+      <div class="nav-icons">
+        <a href="https://www.instagram.com/lemoose.prod/" class="nav-icon-btn" title="Instagram" target="_blank" rel="noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </a>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=lemooseproductions%40gmail.com&su=New%20Inquiry%20-%20Lemoose%20Productions&body=Hi%20Lemoose%20Productions%2C%0A%0AI'd%20love%20to%20chat%20about%20a%20potential%20project.%20A%20quick%20rundown%3A%0A%0A%E2%80%A2%20Project%20type%20(portrait%20%2F%20athlete%20%2F%20automotive%20%2F%20other)%3A%20%0A%E2%80%A2%20Preferred%20date(s)%3A%20%0A%E2%80%A2%20Location%3A%20%0A%E2%80%A2%20Anything%20else%20I%20should%20know%3A%20%0A%0ALooking%20forward%20to%20hearing%20back!%0A%0AThanks%2C%0A____________%0A" class="nav-icon-btn" title="Email" target="_blank" rel="noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </a>
+      </div>
+
+      <a href="/work" class="nav-back" aria-label="Back to work">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>BACK</span>
+      </a>
+    </nav>
+
+    <main class="portraits-page">
+      <section class="hero section-shell" aria-label="Portraits hero">
+        <img
+          class="hero__photo"
+          src="/subphotos/portraits/portraits-01.jpg"
+          alt="Landscape portrait scene introducing the series"
+        />
+        <div class="hero__overlay" aria-hidden="true"></div>
+        <div class="edge-label">PORTRAITS - 01</div>
+        <div class="hero__copy hero__copy--left">
+          <h1 class="story-title">Portraits</h1>
+          <p class="hero__subtitle">STREET / EDITORIAL</p>
+        </div>
+        <div class="hero__copy hero__copy--right">
+          <p class="hero__scroll">SCROLL ↓</p>
+        </div>
+      </section>
+
+      <section class="intro section-shell" aria-label="Editorial intro">
+        <p>
+          Faces from around the way. Cousins, friends, strangers who let me see them for a second.
+        </p>
+      </section>
+
+      <section class="portrait-row-234 section-shell" aria-label="Portrait row two through four">
+        <div class="portrait-row-234__item">
+          <img src="/subphotos/portraits/portraits-04.jpg" alt="Portrait subject framed against urban backdrop" loading="lazy" />
+        </div>
+        <div class="portrait-row-234__item">
+          <img src="/subphotos/portraits/portraits-03.jpg" alt="Editorial portrait with direct gaze" loading="lazy" />
+        </div>
+        <div class="portrait-row-234__item">
+          <img src="/subphotos/portraits/portraits-02.jpg" alt="Portrait subject standing in street light" loading="lazy" />
+        </div>
+      </section>
+
+      <section class="portrait-row-567 section-shell" aria-label="Portrait row featuring photos five through seven">
+        <div class="portrait-row-567__item">
+          <div class="portrait-row-567__mo-clip">
+            <img src="/subphotos/portraits/portraits-05.jpg" alt="Vertical portrait feature image" loading="lazy" />
+          </div>
+        </div>
+        <div class="portrait-row-567__item">
+          <div class="portrait-row-567__mo-clip">
+            <img src="/subphotos/portraits/portraits-06.jpg" alt="Editorial portrait in natural light" loading="lazy" />
+          </div>
+        </div>
+        <div class="portrait-row-567__item">
+          <img src="/subphotos/portraits/portraits-07.jpg" alt="Vertical portrait with dramatic shadows" loading="lazy" />
+        </div>
+      </section>
+
+      <section class="wide-landscape section-shell" aria-label="Wide landscape portrait">
+        <img
+          class="hero__photo"
+          src="/subphotos/portraits/portraits-08.jpg"
+          alt="Wide landscape portrait composition"
+          loading="lazy"
+        />
+        <div class="hero__overlay" aria-hidden="true"></div>
+      </section>
+
+      <section class="pull-quote section-shell" aria-label="Pull quote">
+        <p>Some afternoons all you need is the right light and a willing face.</p>
+      </section>
+
+      <section class="portrait-row-911 section-shell" aria-label="Portrait row nine through eleven">
+        <div class="portrait-row-911__item">
+          <img src="/subphotos/portraits/portraits-09.jpg" alt="Portrait subject seated beside window light" loading="lazy" />
+        </div>
+        <div class="portrait-row-911__item">
+          <img src="/subphotos/portraits/portraits-10.jpg" alt="Close editorial portrait in soft contrast" loading="lazy" />
+        </div>
+        <div class="portrait-row-911__item">
+          <img src="/subphotos/portraits/portraits-11.jpg" alt="Vertical portrait with textured background" loading="lazy" />
+        </div>
+      </section>
+
+      <section class="portrait-row-1213 section-shell" aria-label="Closing portraits twelve through fourteen">
+        <div class="portrait-row-1213__item">
+          <img src="/subphotos/portraits/portraits-12.jpg" alt="Closing vertical portrait image" loading="lazy" />
+        </div>
+        <div class="portrait-row-1213__item">
+          <img src="/subphotos/portraits/portraits-13.jpg" alt="Portrait subject in street editorial framing" loading="lazy" />
+        </div>
+        <div class="portrait-row-1213__item">
+          <img src="/subphotos/portraits/portraits-14.jpg" alt="Editorial portrait closing the series" loading="lazy" />
+        </div>
+      </section>
+
+      <section class="next-story section-shell" aria-label="Next story">
+        <p class="next-story__left">[ END - 01 ]</p>
+        <p class="next-story__right"><a class="next-story__link" href="/work/automotive">Next: Automotive →</a></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__shot-for">
+        <p class="site-footer__shot-for-label">SHOT FOR</p>
+        <p class="site-footer__shot-for-names">@frankystainnn · @msixtv · @motorized.empire · COLBY ATHLETICS · RISEMARK</p>
+      </div>
+      <div class="site-footer__rule"></div>
+      <div class="site-footer__bottom">
+        <img src="/uploads/newlogo.png" class="site-footer__bottom-logo" alt="Lemoose watermark" />
+        <span class="site-footer__copyright">© 2026 LEMOOSE PRODUCTIONS - TUSCALOOSA</span>
+      </div>
+    </footer>
+  </body>
+</html>

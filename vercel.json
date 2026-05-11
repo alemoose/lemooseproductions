@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/work/portraits", "destination": "/work/portraits.html" },
+    { "source": "/work/portraits/", "destination": "/work/portraits.html" },
+    { "source": "/work/automotive", "destination": "/work/automotive.html" },
+    { "source": "/work/automotive/", "destination": "/work/automotive.html" },
+    { "source": "/work/athletes", "destination": "/work/athletes.html" },
+    { "source": "/work/athletes/", "destination": "/work/athletes.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
