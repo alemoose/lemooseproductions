@@ -34,14 +34,16 @@ body {
 }
 
 /**
- * scroll-snap-stop: always forces a hard stop on every section before the
- * scroll can continue — iOS Safari is strict about this and it kills momentum
- * (feels like normal scroll + rubber-band at each snap). `normal` lets one
- * fling glide through intermediate snaps and settle on the nearest alignment.
+ * scroll-snap-stop:
+ *   - Desktop (mouse/trackpad): `always` — wheel/fling stops at every panel
+ *     so the home page reads one section at a time.
+ *   - Touch: overridden to `normal` below — iOS treats `always` as a hard
+ *     stop that kills momentum, so we let one fling glide through and
+ *     settle on the nearest snap instead.
  */
 .snap-section {
   scroll-snap-align: start;
-  scroll-snap-stop: normal;
+  scroll-snap-stop: always;
   height: 100vh;
   height: 100dvh;
   position: relative;
@@ -50,7 +52,7 @@ body {
 
 .snap-section-tall {
   scroll-snap-align: start;
-  scroll-snap-stop: normal;
+  scroll-snap-stop: always;
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
@@ -932,13 +934,19 @@ body {
 
 .home-footer-section {
   scroll-snap-align: start;
-  scroll-snap-stop: normal;
+  scroll-snap-stop: always;
 }
 
-/* Touch: let native momentum + snap finish the gesture; CSS smooth fights iOS. */
+/* Touch: let native momentum + snap finish the gesture; CSS smooth and
+ * scroll-snap-stop: always both fight iOS's native deceleration. */
 @media (hover: none) {
   .snap-container {
     scroll-behavior: auto;
+  }
+  .snap-section,
+  .snap-section-tall,
+  .home-footer-section {
+    scroll-snap-stop: normal;
   }
 }
 
