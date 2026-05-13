@@ -2,6 +2,31 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 
 const HERO_IMAGE = '/uploads/automotive1.jpeg';
 
+/**
+ * Apply the equivalent of CSS `filter: saturate(0.45) brightness(0.38)` to a
+ * canvas region via pixel math. We do this manually instead of using
+ * ctx.filter so the effect renders identically on iOS Safari, where canvas
+ * ctx.filter support is inconsistent.
+ *
+ * Matrix derived from the CSS Filters Level 1 spec:
+ *   saturate(s): standard color matrix with s = 0.45
+ *   brightness(b): multiplies each channel by b = 0.38
+ * Combined matrix is precomputed below (brightness applied after saturate).
+ */
+function applySaturateBrightness(ctx, W, H) {
+  const imgData = ctx.getImageData(0, 0, W, H);
+  const d = imgData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i];
+    const g = d[i + 1];
+    const b = d[i + 2];
+    d[i]     = 0.21552 * r + 0.14944 * g + 0.01505 * b;
+    d[i + 1] = 0.04452 * r + 0.32044 * g + 0.01505 * b;
+    d[i + 2] = 0.04452 * r + 0.14944 * g + 0.18605 * b;
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+
 /** object-fit: cover math - same framing as full-bleed <img> in story sections */
 function drawHalftone(ctx, img, logicalW, logicalH) {
   const W = logicalW;
@@ -18,8 +43,8 @@ function drawHalftone(ctx, img, logicalW, logicalH) {
     const scale = Math.max(W / img.width, H / img.height);
     const sw = img.width * scale;
     const sh = img.height * scale;
-    octx.filter = 'saturate(0.45) brightness(0.38)';
     octx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh);
+    applySaturateBrightness(octx, W, H);
   }
   ctx.drawImage(off, 0, 0);
 
