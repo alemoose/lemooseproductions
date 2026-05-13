@@ -1,9 +1,18 @@
 import ParallaxPhoto from './ParallaxPhoto.jsx';
 import { Link } from 'react-router-dom';
 
-export default function StorySection({ num, cat, titleLines, caption, linkTo, img, imgPos, scrollY, sectionRef }) {
+export default function StorySection({
+  num,
+  cat,
+  titleLines,
+  caption,
+  linkTo,
+  img,
+  imgPos,
+  containerRef,
+  sectionRef,
+}) {
   const idx = parseInt(num, 10) - 1;
-  const sectionTop = sectionRef?.current?.offsetTop ?? 0;
   const linked = Boolean(linkTo);
   const staticStoryPaths = ['/work/portraits', '/work/automotive', '/work/athletes'];
   const linkReloadDocument = Boolean(
@@ -22,8 +31,8 @@ export default function StorySection({ num, cat, titleLines, caption, linkTo, im
         src={img}
         alt={cat}
         objectPosition={imgPos}
-        scrollY={scrollY}
-        sectionTop={sectionTop}
+        containerRef={containerRef}
+        sectionRef={sectionRef}
       />
       <div
         className="story-section__overlay"

@@ -1,23 +1,14 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useRef } from 'react';
 import HalftoneHero from '../components/HalftoneHero.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import StorySection from '../components/StorySection.jsx';
 
 export default function HomePage() {
-  const [scrollY, setScrollY] = useState(0);
   const containerRef = useRef(null);
   const heroRef = useRef(null);
   const s1Ref = useRef(null);
   const s2Ref = useRef(null);
   const s3Ref = useRef(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const onScroll = () => setScrollY(el.scrollTop);
-    el.addEventListener('scroll', onScroll, { passive: true });
-    return () => el.removeEventListener('scroll', onScroll);
-  }, []);
 
   return (
     <div className="snap-container home-page" ref={containerRef}>
@@ -62,7 +53,7 @@ export default function HomePage() {
         linkTo="/work/portraits"
         img="/uploads/portrait4.jpeg"
         imgPos="center 30%"
-        scrollY={scrollY}
+        containerRef={containerRef}
         sectionRef={s1Ref}
       />
 
@@ -74,7 +65,7 @@ export default function HomePage() {
         linkTo="/work/automotive"
         img="/uploads/automotive3.jpg"
         imgPos="center center"
-        scrollY={scrollY}
+        containerRef={containerRef}
         sectionRef={s2Ref}
       />
 
@@ -86,7 +77,7 @@ export default function HomePage() {
         linkTo="/work/athletes"
         img="/uploads/athletic1.jpg"
         imgPos="center 20%"
-        scrollY={scrollY}
+        containerRef={containerRef}
         sectionRef={s3Ref}
       />
 
