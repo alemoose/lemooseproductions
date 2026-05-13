@@ -26,24 +26,33 @@ body {
 /* ── Scroll-snap container ── */
 .snap-container {
   height: 100vh;
+  height: 100dvh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   overscroll-behavior: none;
 }
 
+/**
+ * scroll-snap-stop: always forces a hard stop on every section before the
+ * scroll can continue — iOS Safari is strict about this and it kills momentum
+ * (feels like normal scroll + rubber-band at each snap). `normal` lets one
+ * fling glide through intermediate snaps and settle on the nearest alignment.
+ */
 .snap-section {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   overflow: hidden;
 }
 
 .snap-section-tall {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   overflow: hidden;
 }
@@ -916,12 +925,21 @@ body {
 .home-page {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
 }
 
 .home-footer-section {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
+}
+
+/* Touch: let native momentum + snap finish the gesture; CSS smooth fights iOS. */
+@media (hover: none) {
+  .snap-container {
+    scroll-behavior: auto;
+  }
 }
 
 .about-page {

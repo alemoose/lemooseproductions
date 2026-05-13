@@ -64,22 +64,56 @@ function drawHalftone(ctx, img, logicalW, logicalH) {
   mctx.font = `900 ${fontSize}px 'Playfair Display', Georgia, serif`;
   mctx.fillStyle = '#fff';
   mctx.textAlign = 'center';
-  mctx.textBaseline = 'middle';
-  mctx.fillText('LEMOOSE', W / 2, H / 2);
+  /** iOS Safari centers `middle` differently than Chrome; E bars then sit wrong vs the dot grid. */
+  mctx.textBaseline = 'alphabetic';
+  const tm = mctx.measureText('LEMOOSE');
+  let ascent = tm.actualBoundingBoxAscent;
+  let descent = tm.actualBoundingBoxDescent;
+  if (!Number.isFinite(ascent) || ascent <= 0) {
+    ascent = fontSize * 0.72;
+  }
+  if (!Number.isFinite(descent) || descent < 0) {
+    descent = fontSize * 0.24;
+  }
+  const baselineY = H / 2 + (ascent - descent) / 2;
+  mctx.fillText('LEMOOSE', W / 2, baselineY);
 
   const maskData = mctx.getImageData(0, 0, W, H).data;
 
   const baseStep = 9;
-  const dotStep = Math.max(6, Math.round(baseStep * (Math.min(W, 900) / 900)));
+  const dotStep = Math.max(5, Math.round(baseStep * (Math.min(W, H, 900) / 900)));
   const dotRadius = dotStep * 0.42;
   ctx.fillStyle = '#E8E4DC';
+
+  /**
+   * Compute each cell's brightness as the AVERAGE of a small sub-grid of
+   * samples within the cell (box-filter). A single-pixel sample misses thin
+   * strokes that fall between grid lines; using max instead over-dilates
+   * everything that touches a stroke. Averaging gives natural partial-coverage
+   * — narrow strokes still produce small dots, full coverage produces full
+   * dots, just like a proper halftone screen.
+   */
+  const SUB = 3;
+  const subPositions = new Array(SUB);
+  for (let i = 0; i < SUB; i++) {
+    subPositions[i] = (i + 0.5) / SUB;
+  }
+
   for (let y = 0; y < H; y += dotStep) {
     for (let x = 0; x < W; x += dotStep) {
-      const px = Math.min(Math.floor(x), W - 1);
-      const py = Math.min(Math.floor(y), H - 1);
-      const idx = (py * W + px) * 4;
-      const brightness = maskData[idx];
-      if (brightness > 55) {
+      let total = 0;
+      let count = 0;
+      for (let sy = 0; sy < SUB; sy++) {
+        const py = Math.min(Math.floor(y + subPositions[sy] * dotStep), H - 1);
+        for (let sx = 0; sx < SUB; sx++) {
+          const px = Math.min(Math.floor(x + subPositions[sx] * dotStep), W - 1);
+          total += maskData[(py * W + px) * 4];
+          count++;
+        }
+      }
+      const brightness = total / count;
+
+      if (brightness > 24) {
         const r = dotRadius * (brightness / 255);
         ctx.beginPath();
         ctx.arc(x + dotStep / 2, y + dotStep / 2, Math.max(r, 0.5), 0, Math.PI * 2);
