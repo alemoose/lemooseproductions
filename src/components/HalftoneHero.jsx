@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-const HERO_IMAGE = '/uploads/automotive1.jpeg';
+const HERO_IMAGE = '/uploads/automotive1-1280.jpg';
 
 /**
  * Apply the equivalent of CSS `filter: saturate(0.45) brightness(0.38)` to a
@@ -150,14 +150,24 @@ export default function HalftoneHero() {
   }, []);
 
   useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = HERO_IMAGE;
-    img.onload = () => {
+    const assign = (img) => {
       imgRef.current = img;
       setLoaded(true);
     };
-    img.onerror = () => setLoaded(true);
+
+    const loadJpeg = () => {
+      const fallback = new Image();
+      fallback.crossOrigin = 'anonymous';
+      fallback.src = HERO_IMAGE;
+      fallback.onload = () => assign(fallback);
+      fallback.onerror = () => setLoaded(true);
+    };
+
+    const avif = new Image();
+    avif.crossOrigin = 'anonymous';
+    avif.src = '/uploads/automotive1-1280.avif';
+    avif.onload = () => assign(avif);
+    avif.onerror = loadJpeg;
   }, []);
 
   useEffect(() => {

@@ -3,22 +3,17 @@ import { useEffect, useRef } from 'react';
 const SPEED = 0.3;
 
 /**
- * Parallax photo that bypasses React entirely for scroll updates.
- *
- * Instead of being driven by a React `scrollY` prop (which forces the whole
- * homepage subtree to re-render on every scroll event), this component
- * attaches its own passive scroll listener to the scroll container and writes
- * `transform: translate3d(...)` directly to the <img> element inside a
- * requestAnimationFrame. That keeps scroll handling on the compositor thread
- * and prevents React reconciliation from running while scrolling - which is
- * what was causing the text to look jumpy on mobile.
+ * Parallax photo with responsive srcset. Scroll updates run outside React
+ * via rAF; section offset is cached and only remeasured on resize.
  */
 export default function ParallaxPhoto({
-  src,
+  imageBase,
   alt,
   objectPosition = 'center',
   containerRef,
   sectionRef,
+  loading = 'lazy',
+  fetchPriority,
 }) {
   const imgRef = useRef(null);
 
@@ -68,13 +63,24 @@ export default function ParallaxPhoto({
     };
   }, [containerRef, sectionRef]);
 
+  const avifSrcSet = `/uploads/${imageBase}-768.avif 768w, /uploads/${imageBase}-1280.avif 1280w, /uploads/${imageBase}-1920.avif 1920w`;
+  const jpgSrcSet = `/uploads/${imageBase}-768.jpg 768w, /uploads/${imageBase}-1280.jpg 1280w, /uploads/${imageBase}-1920.jpg 1920w`;
+
   return (
-    <img
-      ref={imgRef}
-      src={src}
-      alt={alt}
-      className="parallax-photo"
-      style={{ objectPosition }}
-    />
+    <picture>
+      <source type="image/avif" srcSet={avifSrcSet} sizes="100vw" />
+      <img
+        ref={imgRef}
+        src={`/uploads/${imageBase}-1280.jpg`}
+        srcSet={jpgSrcSet}
+        sizes="100vw"
+        alt={alt}
+        className="parallax-photo"
+        style={{ objectPosition }}
+        loading={loading}
+        fetchPriority={fetchPriority}
+        decoding="async"
+      />
+    </picture>
   );
 }

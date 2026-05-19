@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-
-const LOGO = '/uploads/newlogo.png';
+import NavLogo from './NavLogo.jsx';
 
 const SHOT_FOR_NAMES = [
   '@frankystainnn',
@@ -60,7 +59,7 @@ export default function SiteFooter() {
 
       <div className="site-footer__rule" />
       <div className="site-footer__bottom">
-        <img src={LOGO} className="site-footer__bottom-logo" alt="Lemoose watermark" />
+        <NavLogo className="site-footer__bottom-logo" alt="Lemoose watermark" />
         <span className="site-footer__copyright">© 2026 LEMOOSE PRODUCTIONS - TUSCALOOSA</span>
       </div>
     </footer>

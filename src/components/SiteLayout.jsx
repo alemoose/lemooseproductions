@@ -1,8 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { Outlet, NavLink, Link, useLocation } from 'react-router-dom';
 import SiteFooter from './SiteFooter.jsx';
-
-const LOGO = '/uploads/newlogo.png';
+import NavLogo from './NavLogo.jsx';
 
 const IG_PLACEHOLDER = 'https://www.instagram.com/lemoose.prod/';
 const MAIL_ADDRESS = 'lemooseproductions@gmail.com';
@@ -133,7 +132,7 @@ export default function SiteLayout() {
 
       <nav className="nav-bar" aria-label="Primary">
         <Link to="/" className="nav-logo-link" aria-label="Home">
-          <img src={LOGO} className="nav-logo" alt="" />
+          <NavLogo alt="" />
         </Link>
 
         <div className="nav-capsule">

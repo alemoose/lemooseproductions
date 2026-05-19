@@ -51,7 +51,7 @@ export default function HomePage() {
         titleLines={['The Cast']}
         caption="LIFESTYLE · CREATORS · GRADS"
         linkTo="/work/portraits"
-        img="/uploads/portrait4.jpeg"
+        imageBase="portrait4"
         imgPos="center 30%"
         containerRef={containerRef}
         sectionRef={s1Ref}
@@ -63,7 +63,7 @@ export default function HomePage() {
         titleLines={['Miami', 'Hours']}
         caption="EXOTICS · MOTORSPORT · STREET"
         linkTo="/work/automotive"
-        img="/uploads/automotive3.jpg"
+        imageBase="automotive3"
         imgPos="center center"
         containerRef={containerRef}
         sectionRef={s2Ref}
@@ -75,7 +75,7 @@ export default function HomePage() {
         titleLines={['In', 'Motion']}
         caption="SPORTS · GAMEDAY · TRAINING"
         linkTo="/work/athletes"
-        img="/uploads/athletic1.jpg"
+        imageBase="athletic1"
         imgPos="center 20%"
         containerRef={containerRef}
         sectionRef={s3Ref}

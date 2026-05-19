@@ -3,6 +3,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const WORK_SRC_DIR = path.resolve(__dirname, 'work');
@@ -61,5 +63,10 @@ function workPages() {
 }
 
 export default defineConfig({
-  plugins: [react(), workPages()],
+  plugins: [
+    react(),
+    workPages(),
+    cssInjectedByJsPlugin(),
+    visualizer({ open: false, filename: 'dist/stats.html' }),
+  ],
 });

@@ -7,7 +7,7 @@ export default function StorySection({
   titleLines,
   caption,
   linkTo,
-  img,
+  imageBase,
   imgPos,
   containerRef,
   sectionRef,
@@ -28,11 +28,12 @@ export default function StorySection({
       data-screen-label={`0${num} ${cat}`}
     >
       <ParallaxPhoto
-        src={img}
+        imageBase={imageBase}
         alt={cat}
         objectPosition={imgPos}
         containerRef={containerRef}
         sectionRef={sectionRef}
+        loading="lazy"
       />
       <div
         className="story-section__overlay"
