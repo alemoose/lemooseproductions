@@ -425,6 +425,21 @@
         opacity: 0.4;
       }
 
+      .site-footer__credit {
+        display: block;
+        margin-top: 4px;
+        padding: 4px 0;
+        color: rgba(224, 220, 212, 0.58);
+        text-decoration: none;
+        text-underline-offset: 3px;
+      }
+
+      .site-footer__credit:hover,
+      .site-footer__credit:focus-visible {
+        color: rgba(224, 220, 212, 0.9);
+        text-decoration: underline;
+      }
+
       .site-footer__copyright {
         font-family: 'JetBrains Mono', monospace;
         font-size: var(--text-sub);
@@ -671,7 +686,7 @@
       <div class="site-footer__rule"></div>
       <div class="site-footer__bottom">
         <img src="/uploads/newlogo-80.png" class="site-footer__bottom-logo" alt="Lemoose watermark" />
-        <span class="site-footer__copyright">© 2026 LEMOOSE PRODUCTIONS - TUSCALOOSA</span>
+        <span class="site-footer__copyright">© 2026 LEMOOSE PRODUCTIONS - TUSCALOOSA<a class="site-footer__credit" href="https://www.freeformworks.com/" target="_blank" rel="noopener">Site by Freeform Works</a></span>
       </div>
     </footer>
   </body>
