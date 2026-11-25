@@ -60,7 +60,12 @@ export default function SiteFooter() {
       <div className="site-footer__rule" />
       <div className="site-footer__bottom">
         <NavLogo className="site-footer__bottom-logo" alt="Lemoose watermark" />
-        <span className="site-footer__copyright">© 2026 LEMOOSE PRODUCTIONS - TUSCALOOSA</span>
+        <span className="site-footer__copyright">
+          © 2026 LEMOOSE PRODUCTIONS - TUSCALOOSA
+          <a className="site-footer__credit" href="https://www.freeformworks.com/" target="_blank" rel="noopener">
+            Site by Freeform Works
+          </a>
+        </span>
       </div>
     </footer>
   );
